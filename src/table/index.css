@@ -1,0 +1,49 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    cursor: pointer;
+}
+
+th, td {
+    padding: 10px;
+}
+
+
+table {
+    width: 80%;
+    padding: 30px;
+    margin: 30px;
+}
+
+tr:nth-child(even) {
+    background-color: #f7f8f8;
+}
+
+th {
+    background: #dedcdc;
+}
+
+td[data-d] {
+    font-weight: bold;
+}
+
+caption {
+    cursor: default;
+    font-size: 20px;
+    caption-side: top;
+    text-align: left;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+tr:hover{
+    background: #827d7d;
+}
+th:hover{
+    background: #827d7d;
+}
+tr:active{
+    background: #c2c0c0;
+}
+th:active{
+    background: #c2c0c0;
+}
