@@ -1,32 +1,28 @@
 import React, {Children} from "react";
 import {ICell, PropsColumn, PropsTable} from "./PropsTable";
 import {v4 as uuidv4} from 'uuid';
+import {ParseString} from "./utils";
+
 export class Table extends React.Component<PropsTable, any> {
     private list: Array<PropsColumn> = []
-    private id?:string;
+    private id?: string;
 
     constructor({props}: { props: Readonly<PropsTable> }) {
         super(props);
-        this.id=uuidv4()
+
 
     }
 
     innerRender() {
-
+        this.id = this.props.id ?? uuidv4()
         if (Children) {
             this.list = [];
             Children.map(this.props.children, (d) => {
-
-
                 this.list!.push({
                     style: (d as any).props.style,
                     className: (d as any).props.className,
                     children: (d as any).props.children,
-
-
                 })
-
-
             })
         }
 
@@ -39,7 +35,7 @@ export class Table extends React.Component<PropsTable, any> {
         return (
 
             <table style={this.props.style} is={this.props.id} className={this.props.className}>
-                {this.props.caption ? (
+                {!this.props.caption ? null : (
                     <caption>
                         {
                             this.props.caption
@@ -47,7 +43,7 @@ export class Table extends React.Component<PropsTable, any> {
                     </caption>
 
 
-                ) : (null)}
+                )}
                 <tbody>
                 <tr>
                     {
@@ -68,26 +64,31 @@ export class Table extends React.Component<PropsTable, any> {
                 {
                     this.props.rowItems?.map((row, indexR) => {
                         return (
-                            <tr
-                                onClick={()=>{
-                                    if(this.props.onClickRow){
-                                        this.props.onClickRow(this.id!,indexR)
+                            <tr key={"row" + indexR}
+                                onClick={() => {
+                                    if (this.props.onClickRow) {
+                                        this.props.onClickRow(this.id!, indexR)
                                     }
                                 }}
-                                data-row-id={this.id+"_"+indexR}>
+                                data-row-id={this.id + "_" + indexR}>
                                 {
                                     row.map((cell, indexC) => {
-
-
-                                        if (typeof cell === 'string' || React.isValidElement(cell)) {
+                                        if (typeof cell === 'string' ) {
+                                            return (<td key={indexR + '-' + indexC}>{ParseString(cell,this.props.useInnerHTML)}</td>)
+                                        } else if(React.isValidElement(cell)){
                                             return (<td key={indexR + '-' + indexC}>{cell}</td>)
                                         } else {
                                             const iCell = cell as ICell
-                                            return (<td
-                                                id={iCell.id}
-                                                style={iCell.style}
-                                                className={iCell.className}
-                                                key={indexR + '-' + indexC}>{iCell.content}</td>)
+                                            if(iCell.isVisible){
+                                                return (<td
+                                                    id={iCell.id}
+                                                    style={iCell.style}
+                                                    className={iCell.className}
+                                                    key={indexR + '-' + indexC}>{iCell.content}</td>)
+                                            }else {
+                                                return null;
+                                            }
+
                                         }
 
                                     })
@@ -98,11 +99,7 @@ export class Table extends React.Component<PropsTable, any> {
                     })
                 }
                 </tbody>
-
-
             </table>
-
-
         )
             ;
     }

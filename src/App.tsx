@@ -5,21 +5,22 @@ import {Table} from "./table/Table";
 import {Column} from "./table/Column";
 import {ICell} from "./table/PropsTable";
 
-function add(){
-    return <div style={{color:"red",background:"blue",width:"100%",height:50}}>assa4</div>
-}
+
 
 function App() {
     const list:Array<Array<string|ReactElement|ICell>> =[];
-    list.push(['assa1','assa2'])
+    list.push(['asas','((sender: LeftMenu, obj: ParamsClick))=>void \n' +
+    'ParamsClick = { \n' +
+    '  path: MenuItem[] \n' +
+    '  items: MenuItem \n' +
+    '  element:       HTMLAnchorElement \n' +
+    '} ',{content:"assas"}])
+    for (let i = 0; i < 10 ; i++) {
+        list.push(['assa1:;>','assa'+i])
+    }
 
-    list.push(['assa1',{
-        style:{background:"gray"},
-        content:"assa3"
-    }])
-    list.push(['assa1',add(),])
   return (
-      <Table
+      <Table id={'assa234'}
           onClickRow={(id,index)=>{
               alert(id+" "+index)
           }}
@@ -27,11 +28,12 @@ function App() {
               alert(index)
           }}
           caption={'Simple table'}
-          style={{width:"500px",background:"yellow"}}
+          style={{width:"800px"}}
           rowItems={list}
+             useInnerHTML={true}
       >
           <Column style={{width:"30%",color:"white"}} >Simple</Column>
-          <Column style={{width:"30%",color:"white"}} >Simple</Column>
+          <Column style={{width:"70%",color:"white"}} >Simple</Column>
       </Table>
   );
 }

@@ -11,6 +11,7 @@ export type PropsTable = {
     rowItems?:Array<Array<string|ReactElement|ICell|undefined|null>>
     onClickRow?:(id:string,index:number)=>void
     onClickColumn?:(index:number)=>void
+    useInnerHTML?:boolean
 }
 export type PropsColumn ={
     className?: string;
@@ -26,4 +27,5 @@ export interface ICell{
     className?:string
     style?: React.CSSProperties | undefined
     content?:string|ReactElement;
+    isVisible?:boolean
 }
