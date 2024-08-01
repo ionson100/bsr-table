@@ -35,46 +35,28 @@ caption {
     padding-bottom: 10px;
     font-weight: bold;
 }
-tr:hover{
+
+tr:hover {
     background: #d0cbcb;
 }
-th:hover{
+
+th:hover {
     background: #d0cbcb;
 }
-tr:active{
+
+tr:active {
     background: #a7a3a3;
 }
-th:active{
+
+th:active {
     background: #a7a3a3;
 }
-td:hover{
+
+td:hover {
     background: #f1c7e3;
 }
-td:active{
+
+td:active {
     background: #f5b3df;
 }
 
-#table-wrapper {
-    position:relative;
-}
-#table-scroll {
-    height:150px;
-    overflow:auto;
-    margin-top:20px;
-}
-#table-wrapper table {
-    width:100%;
-
-}
-#table-wrapper table * {
-    background:yellow;
-    color:black;
-}
-#table-wrapper table thead th .text {
-    position:absolute;
-    top:-20px;
-    z-index:2;
-    height:20px;
-    width:35%;
-    border:1px solid red;
-}

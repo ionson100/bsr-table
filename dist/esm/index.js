@@ -2972,19 +2972,21 @@ var Table = /** @class */ (function (_super) {
                 })), (_a = this.props.rowItems) === null || _a === void 0 ? void 0 :
                 _a.map(function (row, indexR) {
                     return (React.createElement("tr", { key: "row" + indexR, onClick: _this.rowClick.bind(_this, indexR), "data-row-id": _this.id + "_" + indexR }, row.map(function (cell, indexC) {
-                        if (typeof cell === 'string') {
-                            return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));
-                        }
-                        else if (React.isValidElement(cell)) {
-                            return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, cell));
-                        }
-                        else {
-                            var iCell = cell;
-                            if (iCell.isVisible) {
-                                return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: indexR + '-' + indexC }, iCell.content));
+                        if (cell) {
+                            if (typeof cell === 'string') {
+                                return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));
+                            }
+                            else if (React.isValidElement(cell)) {
+                                return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, cell));
                             }
                             else {
-                                return null;
+                                var iCell = cell;
+                                if (iCell.isVisible) {
+                                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: indexR + '-' + indexC }, iCell.content));
+                                }
+                                else {
+                                    return null;
+                                }
                             }
                         }
                     })));

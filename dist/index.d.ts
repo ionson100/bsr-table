@@ -5,7 +5,7 @@ type PropsTable = {
     style?: React.CSSProperties | undefined;
     id?: string;
     caption?: string | ReactElement;
-    children?: React.ReactNode;
+    children?: string | React.ReactNode;
     rowItems?: Array<Array<string | ReactElement | ICell | undefined | null>>;
     onClickRow?: (id: string, index: number) => void;
     onClickColumn?: (id: string, index: number) => void;
