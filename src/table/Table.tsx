@@ -7,8 +7,10 @@ export class Table extends React.Component<PropsTable, any> {
     private list: Array<PropsColumn> = []
     private id?: string;
 
+
     constructor({props}: { props: Readonly<PropsTable> }) {
         super(props);
+        this.cellClick = this.cellClick.bind(this)
 
 
     }
@@ -27,6 +29,30 @@ export class Table extends React.Component<PropsTable, any> {
         }
 
 
+    }
+
+    columnClick(column: number) {
+
+        if(this.props.onClickColumn){
+            this.props.onClickColumn(this.id!,column)
+        }
+    }
+
+    cellClick(row: number, column: number) {
+        if (this.props.onClickCell) {
+            this.props.onClickCell(this.id!, row, column)
+        }
+    }
+
+    rowClick(row: number) {
+        if (this.props.onClickRow) {
+            this.props.onClickRow(this.id!, row)
+        }
+    }
+    public Refresh(callback:()=>void){
+        this.forceUpdate(callback)
+    }
+    componentDidMount() {
     }
 
 
@@ -48,15 +74,11 @@ export class Table extends React.Component<PropsTable, any> {
                 <tr>
                     {
                         this.list.map((c, index) => {
-                            return <th onClick={() => {
-                                if (this.props.onClickColumn) {
-                                    this.props.onClickColumn(index)
-                                }
-                            }
-                            }
-                                       key={index}
-                                       className={c.className}
-                                       style={c.style}>{c.children}
+                            return <th
+                                onClick={this.columnClick.bind(this,index)}
+                                key={"col_"+index}
+                                className={c.className}
+                                style={c.style}>{c.children}
                             </th>
                         })
                     }
@@ -64,28 +86,32 @@ export class Table extends React.Component<PropsTable, any> {
                 {
                     this.props.rowItems?.map((row, indexR) => {
                         return (
+
                             <tr key={"row" + indexR}
-                                onClick={() => {
-                                    if (this.props.onClickRow) {
-                                        this.props.onClickRow(this.id!, indexR)
-                                    }
-                                }}
+                                onClick={this.rowClick.bind(this, indexR)}
                                 data-row-id={this.id + "_" + indexR}>
                                 {
                                     row.map((cell, indexC) => {
-                                        if (typeof cell === 'string' ) {
-                                            return (<td key={indexR + '-' + indexC}>{ParseString(cell,this.props.useInnerHTML)}</td>)
-                                        } else if(React.isValidElement(cell)){
-                                            return (<td key={indexR + '-' + indexC}>{cell}</td>)
+                                        if (typeof cell === 'string') {
+                                            return (<td
+                                                onClick={this.cellClick.bind(this, indexR, indexC)}
+                                                key={indexR + '-' + indexC}>{ParseString(cell, this.props.useInnerHTML)}
+                                            </td>)
+                                        } else if (React.isValidElement(cell)) {
+                                            return (<td
+                                                onClick={this.cellClick.bind(this, indexR, indexC)}
+                                                key={indexR + '-' + indexC}>{cell}
+                                            </td>)
                                         } else {
                                             const iCell = cell as ICell
-                                            if(iCell.isVisible){
+                                            if (iCell.isVisible) {
                                                 return (<td
+                                                    onClick={this.cellClick.bind(this, indexR, indexC)}
                                                     id={iCell.id}
                                                     style={iCell.style}
                                                     className={iCell.className}
                                                     key={indexR + '-' + indexC}>{iCell.content}</td>)
-                                            }else {
+                                            } else {
                                                 return null;
                                             }
 
@@ -93,7 +119,6 @@ export class Table extends React.Component<PropsTable, any> {
 
                                     })
                                 }
-
                             </tr>
                         )
                     })

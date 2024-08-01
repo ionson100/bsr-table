@@ -10,7 +10,8 @@ export type PropsTable = {
     children?: React.ReactNode;
     rowItems?:Array<Array<string|ReactElement|ICell|undefined|null>>
     onClickRow?:(id:string,index:number)=>void
-    onClickColumn?:(index:number)=>void
+    onClickColumn?:(id:string,index:number)=>void
+    onClickCell?:(id:string,row:number,column:number)=>void
     useInnerHTML?:boolean
 }
 export type PropsColumn ={
