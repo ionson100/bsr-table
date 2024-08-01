@@ -44,3 +44,7 @@ function getDataTable(): Array<Array<string | ReactElement | ICell>> {
 ## License
 
 MIT © [ionson100](https://github.com/ionson100)
+
+[Props, Function](https://ionson100.github.io/wwwroot/index.html#page=table).
+
+[Examples, Help pages](https://ionson100.github.io/wwwroot/index.html#page=9-2).
