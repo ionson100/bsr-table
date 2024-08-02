@@ -17,26 +17,45 @@ type PropsColumn = {
     style?: React.CSSProperties | undefined;
     children?: string | React.ReactNode;
 };
+type PropsColumnGroups = {
+    id?: string;
+    className?: string;
+    style?: React.CSSProperties | undefined;
+    children?: string | React.ReactNode;
+};
+type PropsHeaderGroups = {
+    id?: string;
+    title?: string | ReactElement;
+    className?: string;
+    style?: React.CSSProperties | undefined;
+    children?: string | React.ReactNode;
+    eventKey?: string;
+    onClick?: (eventKey?: string) => void;
+};
 interface ICell {
     id?: string;
     className?: string;
     style?: React.CSSProperties | undefined;
     content?: string | ReactElement;
+    rawContent?: string | ReactElement;
     isVisible?: boolean;
 }
 
 declare class Table extends React.Component<PropsTable, any> {
     private list;
     private id?;
+    private listGroup;
+    private listHeaderGroup;
     constructor({ props }: {
         props: Readonly<PropsTable>;
     });
     innerRender(): void;
+    private innerParserProps;
     columnClick(column: number): void;
     cellClick(row: number, column: number): void;
     rowClick(row: number): void;
     Refresh(callback: () => void): void;
-    componentDidMount(): void;
+    renderHeaderGroup(): React.JSX.Element | null | undefined;
     render(): React.JSX.Element;
 }
 
@@ -44,6 +63,21 @@ declare class Column extends React.Component<PropsColumn, any> {
     constructor({ props }: {
         props: Readonly<PropsColumn>;
     });
+    render(): undefined;
 }
 
-export { Column, type ICell, type PropsColumn, type PropsTable, Table };
+declare class ColumnGroup extends React.Component<PropsColumnGroups, any> {
+    constructor({ props }: {
+        props: Readonly<PropsColumnGroups>;
+    });
+    render(): undefined;
+}
+
+declare class HeaderGroup extends React.Component<PropsHeaderGroups, any> {
+    constructor({ props }: {
+        props: Readonly<PropsHeaderGroups>;
+    });
+    render(): undefined;
+}
+
+export { Column, ColumnGroup, HeaderGroup, type ICell, type PropsColumn, type PropsTable, Table };

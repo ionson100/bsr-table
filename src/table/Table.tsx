@@ -1,11 +1,33 @@
 import React, {Children} from "react";
-import {ICell, PropsColumn, PropsTable} from "./PropsTable";
+import {ICell, PropsColumn, PropsColumnGroups, PropsTable} from "./PropsTable";
 import {v4 as uuidv4} from 'uuid';
 import {ParseString} from "./utils";
+import {ColumnGroup} from "./ColumnGroup";
+import {HeaderGroup} from "./HeaderGroup";
+
+
+type colGroupType = {
+    className?: string;
+    style?: React.CSSProperties | undefined,
+    span?: number;
+    id?: string;
+}
+type headerGroupType = {
+    className?: string;
+    style?: React.CSSProperties | undefined,
+    colspan?: number;
+    title?: string
+    id?: string;
+    eventKey?:string;
+    onClick?:(eventKey?:string)=>void
+}
+
 
 export class Table extends React.Component<PropsTable, any> {
     private list: Array<PropsColumn> = []
     private id?: string;
+    private listGroup: Array<colGroupType> = [];
+    private listHeaderGroup: Array<headerGroupType> = [];
 
 
     constructor({props}: { props: Readonly<PropsTable> }) {
@@ -16,25 +38,93 @@ export class Table extends React.Component<PropsTable, any> {
     }
 
     innerRender() {
+
         this.id = this.props.id ?? uuidv4()
         if (Children) {
             this.list = [];
+            this.listGroup = [];
+            this.listHeaderGroup = [];
             Children.map(this.props.children, (d) => {
-                this.list!.push({
-                    style: (d as any).props.style,
-                    className: (d as any).props.className,
-                    children: (d as any).props.children,
-                })
+
+                if ((d as any).type.name === HeaderGroup.name) {
+
+                    const header: headerGroupType = {
+                        className: (d as any).props.className,
+                        style: (d as any).props.style,
+                        title: (d as any).props.title,
+                        id: (d as any).props.id,
+                        eventKey:(d as any).props.eventKey,
+                        onClick:(d as any).props.onClick,
+                        colspan: 0
+                    }
+                    const gr = (d as any).props.children
+                    // if(gr){
+                    //     this.innerParserProps(d, header);
+                    //     this.listHeaderGroup.push(header)
+                    // }
+                    Children.map((d as any).props.children, (ff) => {
+                        this.innerParserProps(ff, header);
+                    })
+                    if (header.colspan && header.colspan > 0) {
+                        this.listHeaderGroup.push(header)
+                    }
+
+
+                } else {
+                    const header = {
+                        colspan: 0
+                    }
+                    this.innerParserProps(d, header);
+                    for (let i = 0; i < header.colspan; i++) {
+                        this.listHeaderGroup.push({})
+                    }
+                }
+
+
             })
         }
 
 
     }
 
+    private innerParserProps(d: any, header?: headerGroupType) {
+
+        if ((d as any).type.name === ColumnGroup.name) {
+            const f = new ColumnGroup(d)
+            Children.map((d as any).props.children, (col) => {
+                this.list.push({
+                    style: col.props.style,
+                    className: col.props.className,
+                    children: col.props.children,
+                })
+            })
+            this.listGroup.push({
+                id: (d as any).props.id,
+                className: (d as any).props.className,
+                style: (d as any).props.style,
+                span: React.Children.count((d as any).props.children)
+            })
+            if (header) {
+                header.colspan! += React.Children.count((d as any).props.children);
+            }
+        } else {
+
+            this.listGroup.push({})
+            this.list!.push({
+                style: (d as any).props.style,
+                className: (d as any).props.className,
+                children: (d as any).props.children,
+            })
+            if (header) {
+                header.colspan! += 1;// React.Children.count((d as any).props.children);
+            }
+        }
+    }
+
     columnClick(column: number) {
 
-        if(this.props.onClickColumn){
-            this.props.onClickColumn(this.id!,column)
+        if (this.props.onClickColumn) {
+            this.props.onClickColumn(this.id!, column)
         }
     }
 
@@ -49,10 +139,39 @@ export class Table extends React.Component<PropsTable, any> {
             this.props.onClickRow(this.id!, row)
         }
     }
-    public Refresh(callback:()=>void){
+
+    public Refresh(callback: () => void) {
         this.forceUpdate(callback)
     }
-    componentDidMount() {
+
+    renderHeaderGroup() {
+
+        if (this.listHeaderGroup.length > 0) {
+            if (this.listHeaderGroup.filter(a => a.colspan !== undefined).length > 0) {
+                return <tr>
+                    {
+                        this.listHeaderGroup.map((g, index) => {
+                            if (g.colspan) {
+                                return <th
+                                    onClick={() => {
+                                        if(g.onClick){
+                                            g.onClick(g.eventKey)
+                                        }
+                                    }}
+                                    style={g.style} className={g.className} id={g.id}
+                                    colSpan={g.colspan}>{g.title} </th>
+                            } else {
+                                return <th></th>
+                            }
+                        })
+                    }
+
+                </tr>
+            }
+        } else {
+            return null;
+        }
+
     }
 
 
@@ -70,13 +189,30 @@ export class Table extends React.Component<PropsTable, any> {
 
 
                 )}
+                <colgroup>
+                    {
+                        this.listGroup.map(col => {
+                            if (!col.span) {
+                                return <col/>
+                            } else {
+                                return <col id={col.id} className={col.className} style={col.style} span={col.span}/>
+                            }
+                        })
+
+                    }
+                </colgroup>
+
+
                 <tbody>
+                {
+                    this.renderHeaderGroup()
+                }
                 <tr>
                     {
                         this.list.map((c, index) => {
                             return <th
-                                onClick={this.columnClick.bind(this,index)}
-                                key={"col_"+index}
+                                onClick={this.columnClick.bind(this, index)}
+                                key={"col_" + index}
                                 className={c.className}
                                 style={c.style}>{c.children}
                             </th>
@@ -92,7 +228,7 @@ export class Table extends React.Component<PropsTable, any> {
                                 data-row-id={this.id + "_" + indexR}>
                                 {
                                     row.map((cell, indexC) => {
-                                        if(cell){
+                                        if (cell) {
                                             if (typeof cell === 'string') {
                                                 return (<td
                                                     onClick={this.cellClick.bind(this, indexR, indexC)}
@@ -106,16 +242,20 @@ export class Table extends React.Component<PropsTable, any> {
                                             } else {
                                                 const iCell = cell as ICell
                                                 if (iCell.isVisible) {
-                                                    return (<td
-                                                        onClick={this.cellClick.bind(this, indexR, indexC)}
-                                                        id={iCell.id}
-                                                        style={iCell.style}
-                                                        className={iCell.className}
-                                                        key={indexR + '-' + indexC}>{iCell.content}</td>)
+                                                    return iCell.rawContent ? (iCell.rawContent) : (
+                                                        (<td
+                                                            onClick={this.cellClick.bind(this, indexR, indexC)}
+                                                            id={iCell.id}
+                                                            style={iCell.style}
+                                                            className={iCell.className}
+                                                            key={indexR + '-' + indexC}>{iCell.content}</td>)
+                                                    )
                                                 } else {
                                                     return null;
                                                 }
                                             }
+                                        } else {
+                                            return <td></td>
                                         }
 
 

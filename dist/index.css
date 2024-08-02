@@ -15,9 +15,9 @@ table {
     margin: 30px;
 }
 
-tr:nth-child(even) {
-    background-color: #f1f4f4;
-}
+/*tr:nth-child(even) {*/
+/*    background-color: #f1f4f4;*/
+/*}*/
 
 th {
     background: #dedcdc;
@@ -58,5 +58,9 @@ td:hover {
 
 td:active {
     background: #f5b3df;
+}
+.batman{
+    color: red;
+    font-weight: bold;
 }
 

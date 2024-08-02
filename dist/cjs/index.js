@@ -2918,12 +2918,40 @@ function HtmlEncode(s) {
     return s;
 }
 
+var ColumnGroup = /** @class */ (function (_super) {
+    __extends(ColumnGroup, _super);
+    function ColumnGroup(_a) {
+        var props = _a.props;
+        return _super.call(this, props) || this;
+    }
+    ColumnGroup.prototype.render = function () {
+        return undefined;
+    };
+    return ColumnGroup;
+}(React.Component));
+
+var HeaderGroup = /** @class */ (function (_super) {
+    __extends(HeaderGroup, _super);
+    function HeaderGroup(_a) {
+        var props = _a.props;
+        var _this = _super.call(this, props) || this;
+        alert();
+        return _this;
+    }
+    HeaderGroup.prototype.render = function () {
+        return undefined;
+    };
+    return HeaderGroup;
+}(React.Component));
+
 var Table = /** @class */ (function (_super) {
     __extends(Table, _super);
     function Table(_a) {
         var props = _a.props;
         var _this = _super.call(this, props) || this;
         _this.list = [];
+        _this.listGroup = [];
+        _this.listHeaderGroup = [];
         _this.cellClick = _this.cellClick.bind(_this);
         return _this;
     }
@@ -2933,13 +2961,74 @@ var Table = /** @class */ (function (_super) {
         this.id = (_a = this.props.id) !== null && _a !== void 0 ? _a : v4();
         if (reactExports.Children) {
             this.list = [];
+            this.listGroup = [];
+            this.listHeaderGroup = [];
             reactExports.Children.map(this.props.children, function (d) {
+                if (d.type.name === HeaderGroup.name) {
+                    var header_1 = {
+                        className: d.props.className,
+                        style: d.props.style,
+                        title: d.props.title,
+                        id: d.props.id,
+                        eventKey: d.props.eventKey,
+                        onClick: d.props.onClick,
+                        colspan: 0
+                    };
+                    d.props.children;
+                    // if(gr){
+                    //     this.innerParserProps(d, header);
+                    //     this.listHeaderGroup.push(header)
+                    // }
+                    reactExports.Children.map(d.props.children, function (ff) {
+                        _this.innerParserProps(ff, header_1);
+                    });
+                    if (header_1.colspan && header_1.colspan > 0) {
+                        _this.listHeaderGroup.push(header_1);
+                    }
+                }
+                else {
+                    var header = {
+                        colspan: 0
+                    };
+                    _this.innerParserProps(d, header);
+                    for (var i = 0; i < header.colspan; i++) {
+                        _this.listHeaderGroup.push({});
+                    }
+                }
+            });
+        }
+    };
+    Table.prototype.innerParserProps = function (d, header) {
+        var _this = this;
+        if (d.type.name === ColumnGroup.name) {
+            new ColumnGroup(d);
+            reactExports.Children.map(d.props.children, function (col) {
                 _this.list.push({
-                    style: d.props.style,
-                    className: d.props.className,
-                    children: d.props.children,
+                    style: col.props.style,
+                    className: col.props.className,
+                    children: col.props.children,
                 });
             });
+            this.listGroup.push({
+                id: d.props.id,
+                className: d.props.className,
+                style: d.props.style,
+                span: React.Children.count(d.props.children)
+            });
+            if (header) {
+                header.colspan += React.Children.count(d.props.children);
+            }
+        }
+        else {
+            this.listGroup.push({});
+            this.list.push({
+                style: d.props.style,
+                className: d.props.className,
+                children: d.props.children,
+            });
+            if (header) {
+                header.colspan += 1; // React.Children.count((d as any).props.children);
+            }
         }
     };
     Table.prototype.columnClick = function (column) {
@@ -2960,7 +3049,28 @@ var Table = /** @class */ (function (_super) {
     Table.prototype.Refresh = function (callback) {
         this.forceUpdate(callback);
     };
-    Table.prototype.componentDidMount = function () {
+    Table.prototype.renderHeaderGroup = function () {
+        if (this.listHeaderGroup.length > 0) {
+            if (this.listHeaderGroup.filter(function (a) { return a.colspan !== undefined; }).length > 0) {
+                return React.createElement("tr", null, this.listHeaderGroup.map(function (g, index) {
+                    if (g.colspan) {
+                        return React.createElement("th", { onClick: function () {
+                                if (g.onClick) {
+                                    g.onClick(g.eventKey);
+                                }
+                            }, style: g.style, className: g.className, id: g.id, colSpan: g.colspan },
+                            g.title,
+                            " ");
+                    }
+                    else {
+                        return React.createElement("th", null);
+                    }
+                }));
+            }
+        }
+        else {
+            return null;
+        }
     };
     Table.prototype.render = function () {
         var _this = this;
@@ -2968,7 +3078,16 @@ var Table = /** @class */ (function (_super) {
         this.innerRender();
         return (React.createElement("table", { style: this.props.style, is: this.props.id, className: this.props.className },
             !this.props.caption ? null : (React.createElement("caption", null, this.props.caption)),
+            React.createElement("colgroup", null, this.listGroup.map(function (col) {
+                if (!col.span) {
+                    return React.createElement("col", null);
+                }
+                else {
+                    return React.createElement("col", { id: col.id, className: col.className, style: col.style, span: col.span });
+                }
+            })),
             React.createElement("tbody", null,
+                this.renderHeaderGroup(),
                 React.createElement("tr", null, this.list.map(function (c, index) {
                     return React.createElement("th", { onClick: _this.columnClick.bind(_this, index), key: "col_" + index, className: c.className, style: c.style }, c.children);
                 })), (_a = this.props.rowItems) === null || _a === void 0 ? void 0 :
@@ -2984,12 +3103,15 @@ var Table = /** @class */ (function (_super) {
                             else {
                                 var iCell = cell;
                                 if (iCell.isVisible) {
-                                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: indexR + '-' + indexC }, iCell.content));
+                                    return iCell.rawContent ? (iCell.rawContent) : ((React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: indexR + '-' + indexC }, iCell.content)));
                                 }
                                 else {
                                     return null;
                                 }
                             }
+                        }
+                        else {
+                            return React.createElement("td", null);
                         }
                     })));
                 }))));
@@ -3001,10 +3123,17 @@ var Column = /** @class */ (function (_super) {
     __extends(Column, _super);
     function Column(_a) {
         var props = _a.props;
-        return _super.call(this, props) || this;
+        var _this = _super.call(this, props) || this;
+        alert(22);
+        return _this;
     }
+    Column.prototype.render = function () {
+        return undefined;
+    };
     return Column;
 }(React.Component));
 
 exports.Column = Column;
+exports.ColumnGroup = ColumnGroup;
+exports.HeaderGroup = HeaderGroup;
 exports.Table = Table;

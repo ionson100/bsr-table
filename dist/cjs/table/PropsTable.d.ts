@@ -16,10 +16,26 @@ export type PropsColumn = {
     style?: React.CSSProperties | undefined;
     children?: string | React.ReactNode;
 };
+export type PropsColumnGroups = {
+    id?: string;
+    className?: string;
+    style?: React.CSSProperties | undefined;
+    children?: string | React.ReactNode;
+};
+export type PropsHeaderGroups = {
+    id?: string;
+    title?: string | ReactElement;
+    className?: string;
+    style?: React.CSSProperties | undefined;
+    children?: string | React.ReactNode;
+    eventKey?: string;
+    onClick?: (eventKey?: string) => void;
+};
 export interface ICell {
     id?: string;
     className?: string;
     style?: React.CSSProperties | undefined;
     content?: string | ReactElement;
+    rawContent?: string | ReactElement;
     isVisible?: boolean;
 }
