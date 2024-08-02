@@ -90,7 +90,6 @@ export class Table extends React.Component<PropsTable, any> {
     private innerParserProps(d: any, header?: headerGroupType) {
 
         if ((d as any).type.name === ColumnGroup.name) {
-            const f = new ColumnGroup(d)
             Children.map((d as any).props.children, (col) => {
                 this.list.push({
                     style: col.props.style,

@@ -3001,7 +3001,6 @@ var Table = /** @class */ (function (_super) {
     Table.prototype.innerParserProps = function (d, header) {
         var _this = this;
         if (d.type.name === ColumnGroup.name) {
-            new ColumnGroup(d);
             reactExports.Children.map(d.props.children, function (col) {
                 _this.list.push({
                     style: col.props.style,
