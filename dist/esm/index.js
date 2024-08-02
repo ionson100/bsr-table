@@ -2962,22 +2962,18 @@ var Table = /** @class */ (function (_super) {
             this.listGroup = [];
             this.listHeaderGroup = [];
             reactExports.Children.map(this.props.children, function (d) {
-                if (d.type.name === HeaderGroup.name) {
+                var element = d;
+                if (element.type === HeaderGroup) {
                     var header_1 = {
-                        className: d.props.className,
-                        style: d.props.style,
-                        title: d.props.title,
-                        id: d.props.id,
-                        eventKey: d.props.eventKey,
-                        onClick: d.props.onClick,
+                        className: element.props.className,
+                        style: element.props.style,
+                        title: element.props.title,
+                        id: element.props.id,
+                        eventKey: element.props.eventKey,
+                        onClick: element.props.onClick,
                         colspan: 0
                     };
-                    d.props.children;
-                    // if(gr){
-                    //     this.innerParserProps(d, header);
-                    //     this.listHeaderGroup.push(header)
-                    // }
-                    reactExports.Children.map(d.props.children, function (ff) {
+                    reactExports.Children.map(element.props.children, function (ff) {
                         _this.innerParserProps(ff, header_1);
                     });
                     if (header_1.colspan && header_1.colspan > 0) {
@@ -2998,8 +2994,9 @@ var Table = /** @class */ (function (_super) {
     };
     Table.prototype.innerParserProps = function (d, header) {
         var _this = this;
-        if (d.type.name === ColumnGroup.name) {
-            reactExports.Children.map(d.props.children, function (col) {
+        var element = d;
+        if (element.type === ColumnGroup) {
+            reactExports.Children.map(element.props.children, function (col) {
                 _this.list.push({
                     style: col.props.style,
                     className: col.props.className,
@@ -3007,21 +3004,21 @@ var Table = /** @class */ (function (_super) {
                 });
             });
             this.listGroup.push({
-                id: d.props.id,
-                className: d.props.className,
-                style: d.props.style,
-                span: React.Children.count(d.props.children)
+                id: element.props.id,
+                className: element.props.className,
+                style: element.props.style,
+                span: React.Children.count(element.props.children)
             });
             if (header) {
-                header.colspan += React.Children.count(d.props.children);
+                header.colspan += React.Children.count(element.props.children);
             }
         }
         else {
             this.listGroup.push({});
             this.list.push({
-                style: d.props.style,
-                className: d.props.className,
-                children: d.props.children,
+                style: element.props.style,
+                className: element.props.className,
+                children: element.props.children,
             });
             if (header) {
                 header.colspan += 1; // React.Children.count((d as any).props.children);
@@ -3051,7 +3048,7 @@ var Table = /** @class */ (function (_super) {
             if (this.listHeaderGroup.filter(function (a) { return a.colspan !== undefined; }).length > 0) {
                 return React.createElement("tr", null, this.listHeaderGroup.map(function (g, index) {
                     if (g.colspan) {
-                        return React.createElement("th", { onClick: function () {
+                        return React.createElement("th", { key: 'c7' + index, onClick: function () {
                                 if (g.onClick) {
                                     g.onClick(g.eventKey);
                                 }
@@ -3075,12 +3072,12 @@ var Table = /** @class */ (function (_super) {
         this.innerRender();
         return (React.createElement("table", { style: this.props.style, is: this.props.id, className: this.props.className },
             !this.props.caption ? null : (React.createElement("caption", null, this.props.caption)),
-            React.createElement("colgroup", null, this.listGroup.map(function (col) {
+            React.createElement("colgroup", null, this.listGroup.map(function (col, index) {
                 if (!col.span) {
-                    return React.createElement("col", null);
+                    return React.createElement("col", { key: 'c77' + index });
                 }
                 else {
-                    return React.createElement("col", { id: col.id, className: col.className, style: col.style, span: col.span });
+                    return React.createElement("col", { key: 'c77' + index, id: col.id, className: col.className, style: col.style, span: col.span });
                 }
             })),
             React.createElement("tbody", null,

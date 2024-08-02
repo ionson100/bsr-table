@@ -1,9 +1,10 @@
 import React, {Children} from "react";
-import {ICell, PropsColumn, PropsColumnGroups, PropsTable} from "./PropsTable";
+import {ICell, PropsColumn, PropsTable} from "./PropsTable";
 import {v4 as uuidv4} from 'uuid';
 import {ParseString} from "./utils";
 import {ColumnGroup} from "./ColumnGroup";
 import {HeaderGroup} from "./HeaderGroup";
+
 
 
 type colGroupType = {
@@ -45,24 +46,20 @@ export class Table extends React.Component<PropsTable, any> {
             this.listGroup = [];
             this.listHeaderGroup = [];
             Children.map(this.props.children, (d) => {
-
-                if ((d as any).type.name === HeaderGroup.name) {
+                const element=d as React.ReactElement<any>
+                if (element.type === HeaderGroup) {
 
                     const header: headerGroupType = {
-                        className: (d as any).props.className,
-                        style: (d as any).props.style,
-                        title: (d as any).props.title,
-                        id: (d as any).props.id,
-                        eventKey:(d as any).props.eventKey,
-                        onClick:(d as any).props.onClick,
+                        className: element.props.className,
+                        style: element.props.style,
+                        title: element.props.title,
+                        id: element.props.id,
+                        eventKey:element.props.eventKey,
+                        onClick:element.props.onClick,
                         colspan: 0
                     }
-                    const gr = (d as any).props.children
-                    // if(gr){
-                    //     this.innerParserProps(d, header);
-                    //     this.listHeaderGroup.push(header)
-                    // }
-                    Children.map((d as any).props.children, (ff) => {
+
+                    Children.map(element.props.children, (ff) => {
                         this.innerParserProps(ff, header);
                     })
                     if (header.colspan && header.colspan > 0) {
@@ -89,8 +86,10 @@ export class Table extends React.Component<PropsTable, any> {
 
     private innerParserProps(d: any, header?: headerGroupType) {
 
-        if ((d as any).type.name === ColumnGroup.name) {
-            Children.map((d as any).props.children, (col) => {
+        const element=d as React.ReactElement<any>
+
+        if (element.type === ColumnGroup) {
+            Children.map(element.props.children, (col) => {
                 this.list.push({
                     style: col.props.style,
                     className: col.props.className,
@@ -98,21 +97,21 @@ export class Table extends React.Component<PropsTable, any> {
                 })
             })
             this.listGroup.push({
-                id: (d as any).props.id,
-                className: (d as any).props.className,
-                style: (d as any).props.style,
-                span: React.Children.count((d as any).props.children)
+                id: element.props.id,
+                className: element.props.className,
+                style: element.props.style,
+                span: React.Children.count(element.props.children)
             })
             if (header) {
-                header.colspan! += React.Children.count((d as any).props.children);
+                header.colspan! += React.Children.count(element.props.children);
             }
         } else {
 
             this.listGroup.push({})
             this.list!.push({
-                style: (d as any).props.style,
-                className: (d as any).props.className,
-                children: (d as any).props.children,
+                style: element.props.style,
+                className: element.props.className,
+                children: element.props.children,
             })
             if (header) {
                 header.colspan! += 1;// React.Children.count((d as any).props.children);
@@ -151,7 +150,7 @@ export class Table extends React.Component<PropsTable, any> {
                     {
                         this.listHeaderGroup.map((g, index) => {
                             if (g.colspan) {
-                                return <th
+                                return <th key={'c7'+index}
                                     onClick={() => {
                                         if(g.onClick){
                                             g.onClick(g.eventKey)
@@ -190,11 +189,11 @@ export class Table extends React.Component<PropsTable, any> {
                 )}
                 <colgroup>
                     {
-                        this.listGroup.map(col => {
+                        this.listGroup.map((col,index) => {
                             if (!col.span) {
-                                return <col/>
+                                return <col key={'c77'+index}/>
                             } else {
-                                return <col id={col.id} className={col.className} style={col.style} span={col.span}/>
+                                return <col  key={'c77'+index} id={col.id} className={col.className} style={col.style} span={col.span}/>
                             }
                         })
 
