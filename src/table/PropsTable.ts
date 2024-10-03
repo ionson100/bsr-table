@@ -8,7 +8,7 @@ export type PropsTable = {
     id?: string
     caption?:string|ReactElement;
     children?: string|React.ReactNode;
-    rowItems?:Array<Array<string|ReactElement|ICell|undefined|null>>
+    rowItems?:Array<Array<any|ReactElement|ICell|undefined|null>>
     onClickRow?:(id:string,index:number)=>void
     onClickColumn?:(id:string,index:number)=>void
     onClickCell?:(id:string,row:number,column:number)=>void

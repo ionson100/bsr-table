@@ -138,7 +138,7 @@ export class Table extends React.Component<PropsTable, any> {
         }
     }
 
-    public Refresh(callback: () => void) {
+    public Refresh(callback?: () => void) {
         this.forceUpdate(callback)
     }
 

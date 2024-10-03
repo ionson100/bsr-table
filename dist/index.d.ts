@@ -6,7 +6,7 @@ type PropsTable = {
     id?: string;
     caption?: string | ReactElement;
     children?: string | React.ReactNode;
-    rowItems?: Array<Array<string | ReactElement | ICell | undefined | null>>;
+    rowItems?: Array<Array<any | ReactElement | ICell | undefined | null>>;
     onClickRow?: (id: string, index: number) => void;
     onClickColumn?: (id: string, index: number) => void;
     onClickCell?: (id: string, row: number, column: number) => void;
@@ -54,7 +54,7 @@ declare class Table extends React.Component<PropsTable, any> {
     columnClick(column: number): void;
     cellClick(row: number, column: number): void;
     rowClick(row: number): void;
-    Refresh(callback: () => void): void;
+    Refresh(callback?: () => void): void;
     renderHeaderGroup(): React.JSX.Element | null | undefined;
     render(): React.JSX.Element;
 }
