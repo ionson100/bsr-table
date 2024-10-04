@@ -1,11 +1,21 @@
 import React, { ReactElement } from "react";
+export type RowProperty = {
+    onSelect?: () => {};
+    color?: string;
+    title?: string;
+    CellItems: Array<string | number | boolean | ReactElement | ICell | undefined | null>;
+    style?: React.CSSProperties | undefined;
+    className?: string;
+    onClick?: () => void;
+    id?: string;
+};
 export type PropsTable = {
     className?: string;
     style?: React.CSSProperties | undefined;
     id?: string;
     caption?: string | ReactElement;
     children?: string | React.ReactNode;
-    rowItems?: Array<Array<string | ReactElement | ICell | undefined | null>>;
+    rowItems: Array<Array<string | number | boolean | ReactElement | ICell | undefined | null>> | RowProperty[];
     onClickRow?: (id: string, index: number) => void;
     onClickColumn?: (id: string, index: number) => void;
     onClickCell?: (id: string, row: number, column: number) => void;

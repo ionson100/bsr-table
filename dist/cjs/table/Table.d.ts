@@ -15,5 +15,8 @@ export declare class Table extends React.Component<PropsTable, any> {
     rowClick(row: number): void;
     Refresh(callback: () => void): void;
     renderHeaderGroup(): React.JSX.Element | null | undefined;
+    private renderItemList;
+    private renderItemRowProperty;
+    private renderTd;
     render(): React.JSX.Element;
 }

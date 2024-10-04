@@ -225,7 +225,7 @@ export class Table extends React.Component<PropsTable, any> {
 
     private renderItemRowProperty(props: RowProperty, index: number) {
 
-        const row = props.rowItems
+        const row = props.CellItems
 
 
         return (

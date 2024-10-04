@@ -4,7 +4,7 @@ type RowProperty = {
     onSelect?: () => {};
     color?: string;
     title?: string;
-    rowItems: Array<string | number | boolean | ReactElement | ICell | undefined | null>;
+    CellItems: Array<string | number | boolean | ReactElement | ICell | undefined | null>;
     style?: React.CSSProperties | undefined;
     className?: string;
     onClick?: () => void;
