@@ -3097,7 +3097,7 @@ var Table = /** @class */ (function (_super) {
     Table.prototype.renderItemRowProperty = function (props, index) {
         var _this = this;
         var row = props.CellItems;
-        return (React.createElement("tr", { key: "row" + index, onSelect: props.onSelect, id: props.id, className: props.className, style: props.style, title: props.title, color: props.color, onClick: props.onClick, "data-row-id": this.id + "_" + index }, row.map(function (cell, indexC) {
+        return (React.createElement("tr", { key: "row" + index, onSelect: props.onSelect, id: props.id, className: props.className, style: props.style, title: props.title, color: props.color, onClick: props.onClick ? props.onClick : this.rowClick.bind(this, index), "data-row-id": this.id + "_" + index }, row.map(function (cell, indexC) {
             if (cell) {
                 if (typeof cell === 'string') {
                     return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));

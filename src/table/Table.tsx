@@ -238,7 +238,7 @@ export class Table extends React.Component<PropsTable, any> {
                 style={props.style}
                 title={props.title}
                 color={props.color}
-                onClick={props.onClick}
+                onClick={props.onClick?props.onClick:this.rowClick.bind(this, index)}
                 data-row-id={this.id + "_" + index}>
                 {
                     row.map((cell, indexC) => {
