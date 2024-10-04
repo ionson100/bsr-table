@@ -1,10 +1,9 @@
 import React, {Children} from "react";
-import {ICell, PropsColumn, PropsTable} from "./PropsTable";
+import {ICell, PropsColumn, PropsTable, RowProperty} from "./PropsTable";
 import {v4 as uuidv4} from 'uuid';
 import {ParseString} from "./utils";
 import {ColumnGroup} from "./ColumnGroup";
 import {HeaderGroup} from "./HeaderGroup";
-
 
 
 type colGroupType = {
@@ -19,8 +18,8 @@ type headerGroupType = {
     colspan?: number;
     title?: string
     id?: string;
-    eventKey?:string;
-    onClick?:(eventKey?:string)=>void
+    eventKey?: string;
+    onClick?: (eventKey?: string) => void
 }
 
 
@@ -46,7 +45,7 @@ export class Table extends React.Component<PropsTable, any> {
             this.listGroup = [];
             this.listHeaderGroup = [];
             Children.map(this.props.children, (d) => {
-                const element=d as React.ReactElement<any>
+                const element = d as React.ReactElement<any>
                 if (element.type === HeaderGroup) {
 
                     const header: headerGroupType = {
@@ -54,8 +53,8 @@ export class Table extends React.Component<PropsTable, any> {
                         style: element.props.style,
                         title: element.props.title,
                         id: element.props.id,
-                        eventKey:element.props.eventKey,
-                        onClick:element.props.onClick,
+                        eventKey: element.props.eventKey,
+                        onClick: element.props.onClick,
                         colspan: 0
                     }
 
@@ -86,7 +85,7 @@ export class Table extends React.Component<PropsTable, any> {
 
     private innerParserProps(d: any, header?: headerGroupType) {
 
-        const element=d as React.ReactElement<any>
+        const element = d as React.ReactElement<any>
 
         if (element.type === ColumnGroup) {
             Children.map(element.props.children, (col) => {
@@ -138,7 +137,7 @@ export class Table extends React.Component<PropsTable, any> {
         }
     }
 
-    public Refresh(callback?: () => void) {
+    public Refresh(callback: () => void) {
         this.forceUpdate(callback)
     }
 
@@ -150,14 +149,14 @@ export class Table extends React.Component<PropsTable, any> {
                     {
                         this.listHeaderGroup.map((g, index) => {
                             if (g.colspan) {
-                                return <th key={'c7'+index}
-                                    onClick={() => {
-                                        if(g.onClick){
-                                            g.onClick(g.eventKey)
-                                        }
-                                    }}
-                                    style={g.style} className={g.className} id={g.id}
-                                    colSpan={g.colspan}>{g.title} </th>
+                                return <th key={'c7' + index}
+                                           onClick={() => {
+                                               if (g.onClick) {
+                                                   g.onClick(g.eventKey)
+                                               }
+                                           }}
+                                           style={g.style} className={g.className} id={g.id}
+                                           colSpan={g.colspan}>{g.title} </th>
                             } else {
                                 return <th></th>
                             }
@@ -170,6 +169,131 @@ export class Table extends React.Component<PropsTable, any> {
             return null;
         }
 
+    }
+
+
+    private renderItemList(row: (string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | ICell | null | undefined)[], index: number) {
+        return (
+
+            <tr key={"row" + index}
+                onClick={this.rowClick.bind(this, index)}
+                data-row-id={this.id + "_" + index}>
+                {
+                    row.map((cell, indexC) => {
+                        if (cell) {
+                            if (typeof cell === 'string') {
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{ParseString(cell, this.props.useInnerHTML)}
+                                </td>)
+                            } else if (typeof cell === 'boolean' || typeof cell === 'number') {
+
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{`${cell}`}
+                                </td>)
+                            } else if (React.isValidElement(cell)) {
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{cell}
+                                </td>)
+                            } else {
+                                const iCell = cell as ICell
+                                if (iCell.isVisible) {
+                                    return iCell.rawContent ? (iCell.rawContent) : (
+                                        (<td
+                                            onClick={this.cellClick.bind(this, index, indexC)}
+                                            id={iCell.id}
+                                            style={iCell.style}
+                                            className={iCell.className}
+                                            key={index + '-' + indexC}>{iCell.content}</td>)
+                                    )
+                                } else {
+                                    return null;
+                                }
+                            }
+                        } else {
+                            return <td></td>
+                        }
+
+
+                    })
+                }
+            </tr>
+        )
+    }
+
+    private renderItemRowProperty(props: RowProperty, index: number) {
+
+        const row = props.rowItems
+
+
+        return (
+
+            <tr
+                key={"row" + index}
+                onSelect={props.onSelect}
+                id={props.id}
+                className={props.className}
+                style={props.style}
+                title={props.title}
+                color={props.color}
+                onClick={props.onClick}
+                data-row-id={this.id + "_" + index}>
+                {
+                    row.map((cell, indexC) => {
+
+                        if (cell) {
+
+                            if (typeof cell === 'string') {
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{ParseString(cell, this.props.useInnerHTML)}
+                                </td>)
+                            } else if (typeof cell === 'boolean' || typeof cell === 'number') {
+
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{`${cell}`}
+                                </td>)
+                            } else if (React.isValidElement(cell)) {
+                                return (<td
+                                    onClick={this.cellClick.bind(this, index, indexC)}
+                                    key={index + '-' + indexC}>{cell}
+                                </td>)
+                            } else {
+                                const iCell = cell as ICell
+                                if (iCell.isVisible) {
+                                    return iCell.rawContent ? (iCell.rawContent) : (
+                                        (<td
+                                            onClick={this.cellClick.bind(this, index, indexC)}
+                                            id={iCell.id}
+                                            style={iCell.style}
+                                            className={iCell.className}
+                                            key={index + '-' + indexC}>{iCell.content}</td>)
+                                    )
+                                } else {
+                                    return null;
+                                }
+                            }
+                        } else {
+                            return <td></td>
+                        }
+                    })
+                }
+            </tr>
+        )
+    }
+
+
+    private renderTd(row: Array<string | number | boolean | React.ReactElement | ICell | undefined | null> | RowProperty, index: number) {
+        if (Array.isArray(row)) {
+
+            return this.renderItemList(row, index)
+        } else {
+
+            return this.renderItemRowProperty(row, index)
+        }
     }
 
 
@@ -189,11 +313,12 @@ export class Table extends React.Component<PropsTable, any> {
                 )}
                 <colgroup>
                     {
-                        this.listGroup.map((col,index) => {
+                        this.listGroup.map((col, index) => {
                             if (!col.span) {
-                                return <col key={'c77'+index}/>
+                                return <col key={'c77' + index}/>
                             } else {
-                                return <col  key={'c77'+index} id={col.id} className={col.className} style={col.style} span={col.span}/>
+                                return <col key={'c77' + index} id={col.id} className={col.className} style={col.style}
+                                            span={col.span}/>
                             }
                         })
 
@@ -219,48 +344,9 @@ export class Table extends React.Component<PropsTable, any> {
                 </tr>
                 {
                     this.props.rowItems?.map((row, indexR) => {
-                        return (
 
-                            <tr key={"row" + indexR}
-                                onClick={this.rowClick.bind(this, indexR)}
-                                data-row-id={this.id + "_" + indexR}>
-                                {
-                                    row.map((cell, indexC) => {
-                                        if (cell) {
-                                            if (typeof cell === 'string') {
-                                                return (<td
-                                                    onClick={this.cellClick.bind(this, indexR, indexC)}
-                                                    key={indexR + '-' + indexC}>{ParseString(cell, this.props.useInnerHTML)}
-                                                </td>)
-                                            } else if (React.isValidElement(cell)) {
-                                                return (<td
-                                                    onClick={this.cellClick.bind(this, indexR, indexC)}
-                                                    key={indexR + '-' + indexC}>{cell}
-                                                </td>)
-                                            } else {
-                                                const iCell = cell as ICell
-                                                if (iCell.isVisible) {
-                                                    return iCell.rawContent ? (iCell.rawContent) : (
-                                                        (<td
-                                                            onClick={this.cellClick.bind(this, indexR, indexC)}
-                                                            id={iCell.id}
-                                                            style={iCell.style}
-                                                            className={iCell.className}
-                                                            key={indexR + '-' + indexC}>{iCell.content}</td>)
-                                                    )
-                                                } else {
-                                                    return null;
-                                                }
-                                            }
-                                        } else {
-                                            return <td></td>
-                                        }
+                        return this.renderTd(row, indexR)
 
-
-                                    })
-                                }
-                            </tr>
-                        )
                     })
                 }
                 </tbody>

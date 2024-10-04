@@ -3068,6 +3068,71 @@ var Table = /** @class */ (function (_super) {
             return null;
         }
     };
+    Table.prototype.renderItemList = function (row, index) {
+        var _this = this;
+        return (React.createElement("tr", { key: "row" + index, onClick: this.rowClick.bind(this, index), "data-row-id": this.id + "_" + index }, row.map(function (cell, indexC) {
+            if (cell) {
+                if (typeof cell === 'string') {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));
+                }
+                else if (typeof cell === 'boolean' || typeof cell === 'number') {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, "".concat(cell)));
+                }
+                else if (React.isValidElement(cell)) {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, cell));
+                }
+                else {
+                    var iCell = cell;
+                    if (iCell.isVisible) {
+                        return iCell.rawContent ? (iCell.rawContent) : ((React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: index + '-' + indexC }, iCell.content)));
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+            else {
+                return React.createElement("td", null);
+            }
+        })));
+    };
+    Table.prototype.renderItemRowProperty = function (props, index) {
+        var _this = this;
+        var row = props.rowItems;
+        return (React.createElement("tr", { key: "row" + index, onSelect: props.onSelect, id: props.id, className: props.className, style: props.style, title: props.title, color: props.color, onClick: props.onClick, "data-row-id": this.id + "_" + index }, row.map(function (cell, indexC) {
+            if (cell) {
+                if (typeof cell === 'string') {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));
+                }
+                else if (typeof cell === 'boolean' || typeof cell === 'number') {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, "".concat(cell)));
+                }
+                else if (React.isValidElement(cell)) {
+                    return (React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), key: index + '-' + indexC }, cell));
+                }
+                else {
+                    var iCell = cell;
+                    if (iCell.isVisible) {
+                        return iCell.rawContent ? (iCell.rawContent) : ((React.createElement("td", { onClick: _this.cellClick.bind(_this, index, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: index + '-' + indexC }, iCell.content)));
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+            else {
+                return React.createElement("td", null);
+            }
+        })));
+    };
+    Table.prototype.renderTd = function (row, index) {
+        if (Array.isArray(row)) {
+            return this.renderItemList(row, index);
+        }
+        else {
+            return this.renderItemRowProperty(row, index);
+        }
+    };
     Table.prototype.render = function () {
         var _this = this;
         var _a;
@@ -3088,28 +3153,7 @@ var Table = /** @class */ (function (_super) {
                     return React.createElement("th", { onClick: _this.columnClick.bind(_this, index), key: "col_" + index, className: c.className, style: c.style }, c.children);
                 })), (_a = this.props.rowItems) === null || _a === void 0 ? void 0 :
                 _a.map(function (row, indexR) {
-                    return (React.createElement("tr", { key: "row" + indexR, onClick: _this.rowClick.bind(_this, indexR), "data-row-id": _this.id + "_" + indexR }, row.map(function (cell, indexC) {
-                        if (cell) {
-                            if (typeof cell === 'string') {
-                                return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, ParseString(cell, _this.props.useInnerHTML)));
-                            }
-                            else if (React.isValidElement(cell)) {
-                                return (React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), key: indexR + '-' + indexC }, cell));
-                            }
-                            else {
-                                var iCell = cell;
-                                if (iCell.isVisible) {
-                                    return iCell.rawContent ? (iCell.rawContent) : ((React.createElement("td", { onClick: _this.cellClick.bind(_this, indexR, indexC), id: iCell.id, style: iCell.style, className: iCell.className, key: indexR + '-' + indexC }, iCell.content)));
-                                }
-                                else {
-                                    return null;
-                                }
-                            }
-                        }
-                        else {
-                            return React.createElement("td", null);
-                        }
-                    })));
+                    return _this.renderTd(row, indexR);
                 }))));
     };
     return Table;

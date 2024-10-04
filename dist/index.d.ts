@@ -1,12 +1,22 @@
 import React, { ReactElement } from 'react';
 
+type RowProperty = {
+    onSelect?: () => {};
+    color?: string;
+    title?: string;
+    rowItems: Array<string | number | boolean | ReactElement | ICell | undefined | null>;
+    style?: React.CSSProperties | undefined;
+    className?: string;
+    onClick?: () => void;
+    id?: string;
+};
 type PropsTable = {
     className?: string;
     style?: React.CSSProperties | undefined;
     id?: string;
     caption?: string | ReactElement;
     children?: string | React.ReactNode;
-    rowItems?: Array<Array<any | ReactElement | ICell | undefined | null>>;
+    rowItems: Array<Array<string | number | boolean | ReactElement | ICell | undefined | null>> | RowProperty[];
     onClickRow?: (id: string, index: number) => void;
     onClickColumn?: (id: string, index: number) => void;
     onClickCell?: (id: string, row: number, column: number) => void;
@@ -54,8 +64,11 @@ declare class Table extends React.Component<PropsTable, any> {
     columnClick(column: number): void;
     cellClick(row: number, column: number): void;
     rowClick(row: number): void;
-    Refresh(callback?: () => void): void;
+    Refresh(callback: () => void): void;
     renderHeaderGroup(): React.JSX.Element | null | undefined;
+    private renderItemList;
+    private renderItemRowProperty;
+    private renderTd;
     render(): React.JSX.Element;
 }
 
@@ -80,4 +93,4 @@ declare class HeaderGroup extends React.Component<PropsHeaderGroups, any> {
     render(): undefined;
 }
 
-export { Column, ColumnGroup, HeaderGroup, type ICell, type PropsColumn, type PropsTable, Table };
+export { Column, ColumnGroup, HeaderGroup, type ICell, type PropsColumn, type PropsTable, type RowProperty, Table };
